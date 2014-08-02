@@ -21,6 +21,7 @@ const (
 `
 )
 
+// Command line options
 type Options struct {
 	ResDir string
 	OutDir string
@@ -28,6 +29,7 @@ type Options struct {
 	Clean  bool
 }
 
+// Resource model structure
 type Resources struct {
 	Strings []String `xml:"string"`
 }
@@ -38,6 +40,7 @@ type String struct {
 }
 
 func main() {
+	// Get command line options
 	var (
 		resDir = flag.String("res", "", "Resource(res) directory path. Required.")
 		outDir = flag.String("out", "", "Output directory path. Required.")
@@ -46,10 +49,12 @@ func main() {
 	)
 	flag.Parse()
 	if *resDir == "" || *outDir == "" {
+		// Exit if the required options are empty
 		flag.Usage()
 		os.Exit(1)
 	}
 
+	// Parse resource XML files and generate source code
 	parse(&Options{
 		ResDir: *resDir,
 		OutDir: *outDir,
@@ -58,6 +63,7 @@ func main() {
 }
 
 func parse(opt *Options) {
+	// Parse all of the files in res/values/*.xml
 	valuesDir := filepath.Join(opt.ResDir, "values")
 	files, _ := ioutil.ReadDir(valuesDir)
 	var res Resources
@@ -96,6 +102,7 @@ func parseXml(filename string) (res Resources) {
 func printAsObjectiveC(res *Resources, opt *Options) {
 	// Create output directory
 	if opt.Clean {
+		// Discard all files in the output directory
 		os.RemoveAll(opt.OutDir)
 	}
 	os.MkdirAll(opt.OutDir, 0777)
@@ -113,6 +120,7 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 `, class))
 	for i := range res.Strings {
 		s := res.Strings[i]
+		// Method definition
 		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s;\n", s.Name))
 	}
 	f.WriteString(`
@@ -125,6 +133,7 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	f, _ = os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0666)
 	defer f.Close()
 
+	// Import header file
 	f.WriteString(OutputHeader)
 	f.WriteString(fmt.Sprintf(`#import "%s.h"
 
@@ -133,6 +142,7 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 `, class, class))
 	for i := range res.Strings {
 		s := res.Strings[i]
+		// Method implementation
 		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return @\"%s\"; }\n", s.Name, s.Value))
 	}
 	f.WriteString(`
