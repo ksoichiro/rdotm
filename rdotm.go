@@ -115,7 +115,9 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	defer f.Close()
 
 	f.WriteString(OutputHeader)
-	f.WriteString(fmt.Sprintf(`@interface %s : NSObject
+	f.WriteString(fmt.Sprintf(`#import <Foundation/Foundation.h>
+
+@interface %s : NSObject
 
 `, class))
 	for i := range res.Strings {
