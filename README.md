@@ -1,5 +1,7 @@
 # rdotm
 
+[![Build Status](https://travis-ci.org/ksoichiro/rdotm.svg?branch=master)](https://travis-ci.org/ksoichiro/rdotm)
+
 rdotm(R.m) is the Objective-C resource definition generator like Android app's `R.java`.
 
 ## Install
