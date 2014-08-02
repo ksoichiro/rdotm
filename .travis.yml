@@ -1,0 +1,11 @@
+language: go
+
+go:
+  - 1.2
+
+before_script:
+  - export PATH=$HOME/gopath/bin:$PATH
+
+script:
+  - go build ./...
+  - go test ./...
