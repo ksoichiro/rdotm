@@ -4,6 +4,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/xml"
 	"flag"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 const (
@@ -173,72 +175,54 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	for i := range res.Colors {
 		s := res.Colors[i]
 		// Method implementation
-		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s { return [self colorWithString:@\"%s\"]; }\n", s.Name, s.Value))
+		a, r, g, b := hexToInt(s.Value)
+		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s { return [UIColor colorWithRed:%d/255.0 green:%d/255.0 blue:%d/255.0 alpha:%d/255.0]; }\n", s.Name, r, g, b, a))
 	}
-	// Color generation private utility methods
-	f.WriteString(`
-#pragma mark - Private utility methods
-
-+ (UIColor *)colorWithString:(NSString *)string
-{
-    NSString *rawColorExpr = [string stringByReplacingOccurrencesOfString:@"#" withString:@""];
-    NSString *a, *r, *g, *b;
-    // AARRGGBB
-    if (rawColorExpr.length == 8) {
-        a = [rawColorExpr substringWithRange:NSMakeRange(0, 2)];
-        r = [rawColorExpr substringWithRange:NSMakeRange(2, 2)];
-        g = [rawColorExpr substringWithRange:NSMakeRange(4, 2)];
-        b = [rawColorExpr substringWithRange:NSMakeRange(6, 2)];
-    }
-    // RRGGBB
-    if (rawColorExpr.length == 6) {
-        a = @"FF";
-        r = [rawColorExpr substringWithRange:NSMakeRange(0, 2)];
-        g = [rawColorExpr substringWithRange:NSMakeRange(2, 2)];
-        b = [rawColorExpr substringWithRange:NSMakeRange(4, 2)];
-    }
-    // ARGB
-    if (rawColorExpr.length == 4) {
-        a = [rawColorExpr substringWithRange:NSMakeRange(0, 1)];
-        a = [a stringByAppendingString:a];
-        r = [rawColorExpr substringWithRange:NSMakeRange(1, 1)];
-        r = [r stringByAppendingString:r];
-        g = [rawColorExpr substringWithRange:NSMakeRange(2, 1)];
-        g = [g stringByAppendingString:g];
-        b = [rawColorExpr substringWithRange:NSMakeRange(3, 1)];
-        b = [b stringByAppendingString:b];
-    }
-    // RGB
-    if (rawColorExpr.length == 3) {
-        a = @"FF";
-        r = [rawColorExpr substringWithRange:NSMakeRange(0, 1)];
-        r = [r stringByAppendingString:r];
-        g = [rawColorExpr substringWithRange:NSMakeRange(1, 1)];
-        g = [g stringByAppendingString:g];
-        b = [rawColorExpr substringWithRange:NSMakeRange(2, 1)];
-        b = [b stringByAppendingString:b];
-    }
-    return [self colorWithIntRed:[self integerFromHexString:r]
-                           green:[self integerFromHexString:g]
-                            blue:[self integerFromHexString:b]
-                           alpha:[self integerFromHexString:a]];
-}
-
-+ (UIColor *)colorWithIntRed:(NSUInteger)red green:(NSUInteger)green blue:(NSUInteger)blue alpha:(NSUInteger)alpha
-{
-    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
-}
-
-+ (NSUInteger)integerFromHexString:(NSString *)hex
-{
-    unsigned int i;
-    [[NSScanner scannerWithString:hex] scanHexInt:&i];
-    return i;
-}
-`)
 
 	f.WriteString(`
 @end
 `)
 	f.Close()
+}
+
+func hexToInt(hexString string) (a, r, g, b int) {
+	raw := hexString
+	// Remove prefix '#'
+	if strings.HasPrefix(raw, "#") {
+		braw := []byte(raw)
+		raw = string(braw[1:])
+	}
+
+	// Format hex string
+	if len(raw) == 8 {
+		// AARRGGBB: Do nothing
+	} else if len(raw) == 6 {
+		// RRGGBB: Insert alpha(FF)
+		raw = "FF" + raw
+	} else if len(raw) == 4 {
+		// ARGB: Duplicate each hex
+		braw := []byte(raw)
+		sa := string(braw[0:1])
+		sr := string(braw[1:2])
+		sg := string(braw[2:3])
+		sb := string(braw[3:4])
+		raw = sa + sa + sr + sr + sg + sg + sb + sb
+		fmt.Printf("ARGB: %s", raw)
+	} else if len(raw) == 3 {
+		// RGB: Insert alpha(F) and duplicate each hex
+		raw = "F" + raw
+		braw := []byte(raw)
+		sa := string(braw[0:1])
+		sr := string(braw[1:2])
+		sg := string(braw[2:3])
+		sb := string(braw[3:4])
+		raw = sa + sa + sr + sr + sg + sg + sb + sb
+		fmt.Printf("RGB: %s", raw)
+	}
+	bytes, _ := hex.DecodeString(raw)
+	a = int(bytes[0])
+	r = int(bytes[1])
+	g = int(bytes[2])
+	b = int(bytes[3])
+	return
 }
