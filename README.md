@@ -4,9 +4,48 @@
 
 rdotm(R.m) is the Objective-C resource definition generator like Android app's `R.java`.
 
+## Features
+
+### String reference method generation
+
+#### What is it?
+
+A tool to generate code that makes you possible to access string resources via method:  
+`<string name="something">anything</string>` -> `[R string_something]`
+
+#### Why should I use Android XML format?
+
+Because you can share resource files with Android app project.
+
+#### Why not NSLocalizedString?
+
+You can use `Localizable.strings` and `NSLocalizedString`, but it has a problem that even if you have some typos you will not be noticed while compiling them.
+
+For example, if you define a string like this:
+
+```
+"something"="anything";
+```
+
+then you can refer this string with the following code:
+
+```
+// OK, this will be @"anything"
+NSLocalizedString(@"something", nil)
+```
+
+but you may mistype it:
+
+```
+// This is typo, but it won't cause compile error
+NSLocalizedString(@"s0mething", nil)
+```
+
+This means that you must run the app manually and detect this bug with your eye, or write test code to detect it.
+
 ## Install
 
-Get the latest release binary or install with golang environment.
+[Get the latest release binary](https://github.com/ksoichiro/rdotm/releases/latest) or install with golang environment.
 
 ```sh
 $ go get github.com/ksoichiro/rdotm
