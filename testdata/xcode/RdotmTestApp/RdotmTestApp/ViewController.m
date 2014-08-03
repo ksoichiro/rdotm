@@ -19,6 +19,7 @@
 
     [self setTitle:[R string_title_top]];
     [self.message setText:[R string_label_message]];
+    [self.message setTextColor:[R color_default_text]];
 }
 
 @end

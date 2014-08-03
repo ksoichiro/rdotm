@@ -32,9 +32,15 @@ type Options struct {
 // Resource model structure
 type Resources struct {
 	Strings []String `xml:"string"`
+	Colors  []Color  `xml:"color"`
 }
 
 type String struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:",chardata"`
+}
+
+type Color struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:",chardata"`
 }
@@ -77,6 +83,9 @@ func parse(opt *Options) {
 		if 0 < len(r.Strings) {
 			res.Strings = append(res.Strings, r.Strings...)
 		}
+		if 0 < len(r.Colors) {
+			res.Colors = append(res.Colors, r.Colors...)
+		}
 	}
 	printAsObjectiveC(&res, opt)
 }
@@ -115,16 +124,26 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	defer f.Close()
 
 	f.WriteString(OutputHeader)
-	f.WriteString(fmt.Sprintf(`#import <Foundation/Foundation.h>
+	f.WriteString(fmt.Sprintf(`#import <UIKit/UIKit.h>
 
 @interface %s : NSObject
 
 `, class))
+
+	// String
 	for i := range res.Strings {
 		s := res.Strings[i]
 		// Method definition
 		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s;\n", s.Name))
 	}
+
+	// Color
+	for i := range res.Colors {
+		s := res.Colors[i]
+		// Method definition
+		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s;\n", s.Name))
+	}
+
 	f.WriteString(`
 @end
 `)
@@ -142,11 +161,82 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 @implementation %s
 
 `, class, class))
+
+	// String
 	for i := range res.Strings {
 		s := res.Strings[i]
 		// Method implementation
 		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return @\"%s\"; }\n", s.Name, s.Value))
 	}
+
+	// Color
+	for i := range res.Colors {
+		s := res.Colors[i]
+		// Method implementation
+		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s { return [self colorWithString:@\"%s\"]; }\n", s.Name, s.Value))
+	}
+	// Color generation private utility methods
+	f.WriteString(`
+#pragma mark - Private utility methods
+
++ (UIColor *)colorWithString:(NSString *)string
+{
+    NSString *rawColorExpr = [string stringByReplacingOccurrencesOfString:@"#" withString:@""];
+    NSString *a, *r, *g, *b;
+    // AARRGGBB
+    if (rawColorExpr.length == 8) {
+        a = [rawColorExpr substringWithRange:NSMakeRange(0, 2)];
+        r = [rawColorExpr substringWithRange:NSMakeRange(2, 2)];
+        g = [rawColorExpr substringWithRange:NSMakeRange(4, 2)];
+        b = [rawColorExpr substringWithRange:NSMakeRange(6, 2)];
+    }
+    // RRGGBB
+    if (rawColorExpr.length == 6) {
+        a = @"FF";
+        r = [rawColorExpr substringWithRange:NSMakeRange(0, 2)];
+        g = [rawColorExpr substringWithRange:NSMakeRange(2, 2)];
+        b = [rawColorExpr substringWithRange:NSMakeRange(4, 2)];
+    }
+    // ARGB
+    if (rawColorExpr.length == 4) {
+        a = [rawColorExpr substringWithRange:NSMakeRange(0, 1)];
+        a = [a stringByAppendingString:a];
+        r = [rawColorExpr substringWithRange:NSMakeRange(1, 1)];
+        r = [r stringByAppendingString:r];
+        g = [rawColorExpr substringWithRange:NSMakeRange(2, 1)];
+        g = [g stringByAppendingString:g];
+        b = [rawColorExpr substringWithRange:NSMakeRange(3, 1)];
+        b = [b stringByAppendingString:b];
+    }
+    // RGB
+    if (rawColorExpr.length == 3) {
+        a = @"FF";
+        r = [rawColorExpr substringWithRange:NSMakeRange(0, 1)];
+        r = [r stringByAppendingString:r];
+        g = [rawColorExpr substringWithRange:NSMakeRange(1, 1)];
+        g = [g stringByAppendingString:g];
+        b = [rawColorExpr substringWithRange:NSMakeRange(2, 1)];
+        b = [b stringByAppendingString:b];
+    }
+    return [self colorWithIntRed:[self integerFromHexString:r]
+                           green:[self integerFromHexString:g]
+                            blue:[self integerFromHexString:b]
+                           alpha:[self integerFromHexString:a]];
+}
+
++ (UIColor *)colorWithIntRed:(NSUInteger)red green:(NSUInteger)green blue:(NSUInteger)blue alpha:(NSUInteger)alpha
+{
+    return [UIColor colorWithRed:red/255.0 green:green/255.0 blue:blue/255.0 alpha:alpha/255.0];
+}
+
++ (NSUInteger)integerFromHexString:(NSString *)hex
+{
+    unsigned int i;
+    [[NSScanner scannerWithString:hex] scanHexInt:&i];
+    return i;
+}
+`)
+
 	f.WriteString(`
 @end
 `)

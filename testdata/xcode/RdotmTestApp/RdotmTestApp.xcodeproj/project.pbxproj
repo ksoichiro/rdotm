@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DE302171198E06E10039FE42 /* colors.xml in Resources */ = {isa = PBXBuildFile; fileRef = DE302170198E06E10039FE42 /* colors.xml */; };
 		DE32467C198D4AB9003A83CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DE32467B198D4AB9003A83CA /* main.m */; };
 		DE32467F198D4AB9003A83CA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DE32467E198D4AB9003A83CA /* AppDelegate.m */; };
 		DE324682198D4AB9003A83CA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE324681198D4AB9003A83CA /* ViewController.m */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DE302170198E06E10039FE42 /* colors.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = colors.xml; sourceTree = "<group>"; };
 		DE324676198D4AB9003A83CA /* RdotmTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RdotmTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE32467A198D4AB9003A83CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DE32467B198D4AB9003A83CA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 		DE3246A0198D4BBB003A83CA /* values */ = {
 			isa = PBXGroup;
 			children = (
+				DE302170198E06E10039FE42 /* colors.xml */,
 				DE3246A2198D4BBB003A83CA /* strings.xml */,
 			);
 			path = values;
@@ -185,6 +188,7 @@
 				DE3246A4198D4BBB003A83CA /* strings.xml in Resources */,
 				DE324685198D4AB9003A83CA /* Main.storyboard in Resources */,
 				DE324687198D4AB9003A83CA /* Images.xcassets in Resources */,
+				DE302171198E06E10039FE42 /* colors.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
