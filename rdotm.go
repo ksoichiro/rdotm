@@ -4,6 +4,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/xml"
 	"flag"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 const (
@@ -32,9 +34,15 @@ type Options struct {
 // Resource model structure
 type Resources struct {
 	Strings []String `xml:"string"`
+	Colors  []Color  `xml:"color"`
 }
 
 type String struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:",chardata"`
+}
+
+type Color struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:",chardata"`
 }
@@ -77,6 +85,9 @@ func parse(opt *Options) {
 		if 0 < len(r.Strings) {
 			res.Strings = append(res.Strings, r.Strings...)
 		}
+		if 0 < len(r.Colors) {
+			res.Colors = append(res.Colors, r.Colors...)
+		}
 	}
 	printAsObjectiveC(&res, opt)
 }
@@ -115,16 +126,26 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	defer f.Close()
 
 	f.WriteString(OutputHeader)
-	f.WriteString(fmt.Sprintf(`#import <Foundation/Foundation.h>
+	f.WriteString(fmt.Sprintf(`#import <UIKit/UIKit.h>
 
 @interface %s : NSObject
 
 `, class))
+
+	// String
 	for i := range res.Strings {
 		s := res.Strings[i]
 		// Method definition
 		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s;\n", s.Name))
 	}
+
+	// Color
+	for i := range res.Colors {
+		s := res.Colors[i]
+		// Method definition
+		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s;\n", s.Name))
+	}
+
 	f.WriteString(`
 @end
 `)
@@ -142,13 +163,66 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 @implementation %s
 
 `, class, class))
+
+	// String
 	for i := range res.Strings {
 		s := res.Strings[i]
 		// Method implementation
 		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return @\"%s\"; }\n", s.Name, s.Value))
 	}
+
+	// Color
+	for i := range res.Colors {
+		s := res.Colors[i]
+		// Method implementation
+		a, r, g, b := hexToInt(s.Value)
+		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s { return [UIColor colorWithRed:%d/255.0 green:%d/255.0 blue:%d/255.0 alpha:%d/255.0]; }\n", s.Name, r, g, b, a))
+	}
+
 	f.WriteString(`
 @end
 `)
 	f.Close()
+}
+
+func hexToInt(hexString string) (a, r, g, b int) {
+	raw := hexString
+	// Remove prefix '#'
+	if strings.HasPrefix(raw, "#") {
+		braw := []byte(raw)
+		raw = string(braw[1:])
+	}
+
+	// Format hex string
+	if len(raw) == 8 {
+		// AARRGGBB: Do nothing
+	} else if len(raw) == 6 {
+		// RRGGBB: Insert alpha(FF)
+		raw = "FF" + raw
+	} else if len(raw) == 4 {
+		// ARGB: Duplicate each hex
+		braw := []byte(raw)
+		sa := string(braw[0:1])
+		sr := string(braw[1:2])
+		sg := string(braw[2:3])
+		sb := string(braw[3:4])
+		raw = sa + sa + sr + sr + sg + sg + sb + sb
+		fmt.Printf("ARGB: %s", raw)
+	} else if len(raw) == 3 {
+		// RGB: Insert alpha(F) and duplicate each hex
+		raw = "F" + raw
+		braw := []byte(raw)
+		sa := string(braw[0:1])
+		sr := string(braw[1:2])
+		sg := string(braw[2:3])
+		sb := string(braw[3:4])
+		raw = sa + sa + sr + sr + sg + sg + sb + sb
+		fmt.Printf("RGB: %s", raw)
+	}
+	bytes, _ := hex.DecodeString(raw)
+	a = int(bytes[0])
+	r = int(bytes[1])
+	g = int(bytes[2])
+	b = int(bytes[3])
+	return
 }
