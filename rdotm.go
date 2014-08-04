@@ -207,7 +207,6 @@ func hexToInt(hexString string) (a, r, g, b int) {
 		sg := string(braw[2:3])
 		sb := string(braw[3:4])
 		raw = sa + sa + sr + sr + sg + sg + sb + sb
-		fmt.Printf("ARGB: %s", raw)
 	} else if len(raw) == 3 {
 		// RGB: Insert alpha(F) and duplicate each hex
 		raw = "F" + raw
@@ -217,7 +216,6 @@ func hexToInt(hexString string) (a, r, g, b int) {
 		sg := string(braw[2:3])
 		sb := string(braw[3:4])
 		raw = sa + sa + sr + sr + sg + sg + sb + sb
-		fmt.Printf("RGB: %s", raw)
 	}
 	bytes, _ := hex.DecodeString(raw)
 	a = int(bytes[0])
