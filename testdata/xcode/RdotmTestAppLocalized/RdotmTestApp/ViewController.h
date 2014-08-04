@@ -1,0 +1,15 @@
+//
+//  ViewController.h
+//  RdotmTestApp
+//
+//  Copyright (c) 2014 Soichiro Kashima. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface ViewController : UIViewController
+
+@property (strong, nonatomic) IBOutlet UILabel *message;
+
+@end
+

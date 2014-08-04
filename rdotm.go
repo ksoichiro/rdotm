@@ -25,16 +25,18 @@ const (
 
 // Command line options
 type Options struct {
-	ResDir string
-	OutDir string
-	Class  string
-	Clean  bool
+	ResDir   string
+	OutDir   string
+	Class    string
+	Clean    bool
+	Localize bool
 }
 
 // Resource model structure
 type Resources struct {
-	Strings []String `xml:"string"`
-	Colors  []Color  `xml:"color"`
+	Language string   `xml:"-"`
+	Strings  []String `xml:"string"`
+	Colors   []Color  `xml:"color"`
 }
 
 type String struct {
@@ -50,10 +52,11 @@ type Color struct {
 func main() {
 	// Get command line options
 	var (
-		resDir = flag.String("res", "", "Resource(res) directory path. Required.")
-		outDir = flag.String("out", "", "Output directory path. Required.")
-		class  = flag.String("class", "R", "Class name to overwrite default value(R). Optional.")
-		clean  = flag.Bool("clean", false, "Clean output directory before execution.")
+		resDir   = flag.String("res", "", "Resource(res) directory path. Required.")
+		outDir   = flag.String("out", "", "Output directory path. Required.")
+		class    = flag.String("class", "R", "Class name to overwrite default value(R). Optional.")
+		clean    = flag.Bool("clean", false, "Clean output directory before execution.")
+		localize = flag.Bool("localize", false, "Enable localization using NSLocalizedStringFromTable.")
 	)
 	flag.Parse()
 	if *resDir == "" || *outDir == "" {
@@ -64,19 +67,67 @@ func main() {
 
 	// Parse resource XML files and generate source code
 	parse(&Options{
-		ResDir: *resDir,
-		OutDir: *outDir,
-		Class:  *class,
-		Clean:  *clean})
+		ResDir:   *resDir,
+		OutDir:   *outDir,
+		Class:    *class,
+		Clean:    *clean,
+		Localize: *localize})
 }
 
 func parse(opt *Options) {
+	// Clean and create output directory if needed
+	if opt.Clean {
+		// Discard all files in the output directory
+		os.RemoveAll(opt.OutDir)
+	}
+	os.MkdirAll(opt.OutDir, 0777)
+
 	// Parse all of the files in res/values/*.xml
-	valuesDir := filepath.Join(opt.ResDir, "values")
-	files, _ := ioutil.ReadDir(valuesDir)
 	var res Resources
-	for i := range files {
-		entry := files[i]
+	if opt.Localize {
+		resSubDirs, _ := ioutil.ReadDir(opt.ResDir)
+		for i := range resSubDirs {
+			// Get only values directories
+			valuesDir := resSubDirs[i]
+			if matched, _ := regexp.MatchString("^values", valuesDir.Name()); !matched {
+				continue
+			}
+
+			var lang string
+			var r Resources
+			if valuesDir.Name() == "values" {
+				// Base language
+				lang = "Base"
+				r = parseLang(filepath.Join(opt.ResDir, valuesDir.Name()))
+				// Output only base language to Objective-C source
+				res = r
+			} else {
+				re := regexp.MustCompile("values-([a-zA-Z]+)")
+				groups := re.FindStringSubmatch(valuesDir.Name())
+				if groups == nil {
+					// Not supported
+					continue
+				} else {
+					// Maybe supported language
+					lang = groups[1]
+				}
+
+				r = parseLang(filepath.Join(opt.ResDir, valuesDir.Name()))
+			}
+			// Create R.strings
+			printLocalizableStrings(&r, opt, lang)
+		}
+	} else {
+		valuesDir := filepath.Join(opt.ResDir, "values")
+		res = parseLang(valuesDir)
+	}
+	printAsObjectiveC(&res, opt)
+}
+
+func parseLang(valuesDir string) (res Resources) {
+	files, _ := ioutil.ReadDir(valuesDir)
+	for j := range files {
+		entry := files[j]
 		if matched, _ := regexp.MatchString(".xml$", entry.Name()); !matched {
 			continue
 		}
@@ -89,7 +140,7 @@ func parse(opt *Options) {
 			res.Colors = append(res.Colors, r.Colors...)
 		}
 	}
-	printAsObjectiveC(&res, opt)
+	return res
 }
 
 func parseXml(filename string) (res Resources) {
@@ -110,14 +161,29 @@ func parseXml(filename string) (res Resources) {
 	return res
 }
 
-func printAsObjectiveC(res *Resources, opt *Options) {
-	// Create output directory
-	if opt.Clean {
-		// Discard all files in the output directory
-		os.RemoveAll(opt.OutDir)
-	}
-	os.MkdirAll(opt.OutDir, 0777)
+func printLocalizableStrings(res *Resources, opt *Options, lang string) {
+	class := opt.Class
 
+	// Create language separated directory
+	langDir := filepath.Join(opt.OutDir, lang+".lproj")
+	os.MkdirAll(langDir, 0777)
+
+	filename := filepath.Join(langDir, class+".strings")
+	f, _ := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0666)
+	defer f.Close()
+
+	f.WriteString(OutputHeader)
+
+	// String
+	for i := range res.Strings {
+		s := res.Strings[i]
+		f.WriteString(fmt.Sprintf("\"%s\" = \"%s\";\n", s.Name, s.Value))
+	}
+
+	f.Close()
+}
+
+func printAsObjectiveC(res *Resources, opt *Options) {
 	class := opt.Class
 
 	// Print header file(.h)
@@ -168,7 +234,12 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	for i := range res.Strings {
 		s := res.Strings[i]
 		// Method implementation
-		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return @\"%s\"; }\n", s.Name, s.Value))
+		if opt.Localize {
+			// Read from LANG.lproj/R.strings
+			f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return NSLocalizedStringFromTable(@\"%s\", @\"%s\", nil); }\n", s.Name, s.Name, class))
+		} else {
+			f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return @\"%s\"; }\n", s.Name, s.Value))
+		}
 	}
 
 	// Color

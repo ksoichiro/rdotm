@@ -1,0 +1,4 @@
+<resources>
+    <string name="title_top">Demo</string>
+    <string name="label_message">Hello, world!</string>
+</resources>
