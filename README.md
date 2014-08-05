@@ -49,19 +49,61 @@ NSLocalizedString(@"something", nil)
 but you may mistype it:
 
 ```
-// This is typo, but it won't cause compile error
+// This is typo, but it won't cause any compile errors
 NSLocalizedString(@"s0mething", nil)
 ```
 
-This means that you must run the app manually and detect this bug with your eye, or write test code to detect it.
+This means that you must run the app manually and detect this bug with your eyes, or write some test codes to detect it.
 
 ## Install
 
-[Get the latest release binary](https://github.com/ksoichiro/rdotm/releases/latest) or install with golang environment.
+There are several methods to install rdotm.
+
+### Release binary
+
+[Get the latest release binary](https://github.com/ksoichiro/rdotm/releases/latest) is the easiest way to install it if you don't have golang environment.  
+Note that the latest release may be stable but not always the "latest".  
+If you want to use the truly latest version, install it with `go get` or `gom`.
+
+### Install as a golang package
+
+If you want to install it as a global command, try this:
 
 ```sh
 $ go get github.com/ksoichiro/rdotm
 ```
+
+### Use gom (recommended)
+
+If you use this tool in a Xcode build process,
+using [gom](https://github.com/mattn/gom) is the recommended way.  
+With this tool, you can manage rdotm's version in your VCS.
+
+```
+$ go get github.com/mattn/gom
+$ echo "gom 'github.com/ksoichiro/rdotm'" > Gomfile
+$ gom install
+$ tree -L 5
+.
+├── Gomfile
+└── _vendor
+    ├── bin
+    │   └── rdotm
+    └── src
+        └── github.com
+            └── ksoichiro
+                └── rdotm
+```
+
+Now you can use rdotm tool like following command:
+
+```sh
+$ PATH=_vendor/bin:$PATH rdotm -res ...
+or
+$ _vendor/bin:$PATH rdotm -res ...
+```
+
+See sample codes in `testdata/xcode` directories for details.
 
 ## Usage
 
@@ -85,7 +127,7 @@ res
 
 | Option | Default | Description |
 | ------ | ------- | ----------- |
-| `-class` | R | Class name to overwrite default value(R). Optional. |
+| `-class` | R | Class name to overwrite default value(R). |
 | `-clean` | false | Clean output directory before execution. |
 | `-localize` | false | Enable localization using `NSLocalizedStringFromTable`. |
 
