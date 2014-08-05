@@ -202,14 +202,18 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	for i := range res.Strings {
 		s := res.Strings[i]
 		// Method definition
-		f.WriteString(fmt.Sprintf("+ (NSString *)string_%s;\n", s.Name))
+		f.WriteString(fmt.Sprintf(`/** %s */
++ (NSString *)string_%s;
+`, s.Value, s.Name))
 	}
 
 	// Color
 	for i := range res.Colors {
 		s := res.Colors[i]
 		// Method definition
-		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s;\n", s.Name))
+		f.WriteString(fmt.Sprintf(`/** %s */
++ (UIColor *)color_%s;
+`, s.Value, s.Name))
 	}
 
 	f.WriteString(`
