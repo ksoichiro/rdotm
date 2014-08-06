@@ -145,6 +145,9 @@ res
 | `-class` | R | Class name to overwrite default value(R). |
 | `-clean` | false | Clean output directory before execution. |
 | `-localize` | false | Enable localization using `NSLocalizedStringFromTable`. |
+| `-ps` | string_ | Prefix for generated string methods. |
+| `-pc` | color_ | Prefix for generated color methods. |
+| `-pd` | drawable_ | Prefix for generated drawable methods. |
 
 ## Example
 
