@@ -5,6 +5,8 @@
 
 rdotm(R.m) is the Objective-C resource definition generator like Android app's `R.java`.
 
+[![Demo](testdata/images/demo.gif)](testdata/images/demo.gif)
+
 ## Features
 
 ### Color reference method generation
