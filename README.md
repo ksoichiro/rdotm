@@ -55,6 +55,15 @@ NSString *s = NSLocalizedString(@"s0mething", nil);
 
 This means that you must run the app manually and detect this bug with your eyes, or write some test codes to detect it.
 
+### Drawable reference method generation
+
+#### What is it?
+
+A tool to generate code that makes you possible to access image resources via method:  
+`res/drawable/star@2x.png` -> `[R drawable_star]`
+
+Suffix like `@2x` will be ignored, so `star.png` and `star@2x.png` will be identified as the same images.
+
 ## Install
 
 There are several methods to install rdotm.
@@ -118,6 +127,9 @@ Example:
 
 ```
 res
+├── drawable
+│   ├── star.png
+│   └── star@2x.png
 └── values
     ├── colors.xml
     └── strings.xml
@@ -153,6 +165,14 @@ res/values/colors.xml
 </resources>
 ```
 
+res/drawables
+
+```
+res/drawable
+├── star.png
+└── star@2x.png
+```
+
 ### Output file
 
 R.h
@@ -174,6 +194,7 @@ R.h
 + (UIColor *)color_default_bg;
 /** #990099cc */
 + (UIColor *)color_default_text;
++ (UIImage *)drawable_star;
 
 @end
 ```
@@ -193,6 +214,7 @@ R.m
 + (NSString *)string_label_message { return @"Hello, world!"; }
 + (UIColor *)color_default_bg { return [UIColor colorWithRed:187/255.0 green:238/255.0 blue:255/255.0 alpha:255/255.0]; }
 + (UIColor *)color_default_text { return [UIColor colorWithRed:0/255.0 green:153/255.0 blue:204/255.0 alpha:153/255.0]; }
++ (UIImage *)drawable_star { return [UIImage imageNamed:@"star"]; }
 
 @end
 ```
@@ -214,6 +236,7 @@ R.m
 + (NSString *)string_label_message { return NSLocalizedStringFromTable(@"label_message", @"R", nil); }
 + (UIColor *)color_default_bg { return [UIColor colorWithRed:187/255.0 green:238/255.0 blue:255/255.0 alpha:255/255.0]; }
 + (UIColor *)color_default_text { return [UIColor colorWithRed:0/255.0 green:153/255.0 blue:204/255.0 alpha:153/255.0]; }
++ (UIImage *)drawable_star { return [UIImage imageNamed:@"star"]; }
 
 @end
 ```
