@@ -3,10 +3,7 @@
 
 package main
 
-import (
-	"flag"
-	"os"
-)
+import "flag"
 
 // Command line options
 type Options struct {
@@ -52,7 +49,7 @@ func main() {
 	if *resDir == "" || *outDir == "" {
 		// Exit if the required options are empty
 		flag.Usage()
-		os.Exit(1)
+		return
 	}
 
 	// Parse resource XML files and generate source code
