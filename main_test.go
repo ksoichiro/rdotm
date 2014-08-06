@@ -15,7 +15,7 @@ func TestMain(t *testing.T) {
 
 func TestMainLocalizeClean(t *testing.T) {
 	flag.CommandLine = flag.NewFlagSet("LocalizeClean", flag.PanicOnError)
-	os.Args = []string{os.Args[0], "-res=" + filepath.Join("testdata", "res"), "-out=_out", "-localize", "-clean"}
+	os.Args = []string{os.Args[0], "-res=" + filepath.Join("testdata", "res2"), "-out=_out", "-localize", "-clean"}
 	main()
 	os.RemoveAll("_out")
 }
