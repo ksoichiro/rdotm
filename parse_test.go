@@ -1,9 +1,26 @@
 package main
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 )
+
+func TestParseDrawable(t *testing.T) {
+	opt := Options{ResDir: filepath.Join("testdata", "res"), OutDir: "_out"}
+	res := parseDrawables(&opt)
+	if len(res.Drawables) != 1 {
+		t.Errorf("Expected %d strings but was %d\n", 1, len(res.Drawables))
+	}
+	os.RemoveAll(opt.OutDir)
+
+	opt = Options{ResDir: filepath.Join("testdata", "res2"), OutDir: "_out"}
+	res = parseDrawables(&opt)
+	if len(res.Drawables) != 3 {
+		t.Errorf("Expected %d strings but was %d\n", 3, len(res.Drawables))
+	}
+	os.RemoveAll(opt.OutDir)
+}
 
 func TestParseXml(t *testing.T) {
 	res := parseXml(filepath.Join("testdata", "res", "values", "strings.xml"))
