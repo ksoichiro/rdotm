@@ -59,8 +59,8 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		s := res.Strings[i]
 		// Method definition
 		f.WriteString(fmt.Sprintf(`/** %s */
-+ (NSString *)string_%s;
-`, s.Value, s.Name))
++ (NSString *)%s%s;
+`, s.Value, opt.PrefixStrings, s.Name))
 	}
 
 	// Color
@@ -68,16 +68,16 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		s := res.Colors[i]
 		// Method definition
 		f.WriteString(fmt.Sprintf(`/** %s */
-+ (UIColor *)color_%s;
-`, s.Value, s.Name))
++ (UIColor *)%s%s;
+`, s.Value, opt.PrefixColors, s.Name))
 	}
 
 	// Drawable
 	for i := range res.Drawables {
 		s := res.Drawables[i]
 		// Method definition
-		f.WriteString(fmt.Sprintf(`+ (UIImage *)drawable_%s;
-`, s.Name))
+		f.WriteString(fmt.Sprintf(`+ (UIImage *)%s%s;
+`, opt.PrefixDrawables, s.Name))
 	}
 
 	f.WriteString(`
@@ -104,9 +104,9 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		// Method implementation
 		if opt.Localize {
 			// Read from LANG.lproj/R.strings
-			f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return NSLocalizedStringFromTable(@\"%s\", @\"%s\", nil); }\n", s.Name, s.Name, class))
+			f.WriteString(fmt.Sprintf("+ (NSString *)%s%s { return NSLocalizedStringFromTable(@\"%s\", @\"%s\", nil); }\n", opt.PrefixStrings, s.Name, s.Name, class))
 		} else {
-			f.WriteString(fmt.Sprintf("+ (NSString *)string_%s { return @\"%s\"; }\n", s.Name, s.Value))
+			f.WriteString(fmt.Sprintf("+ (NSString *)%s%s { return @\"%s\"; }\n", opt.PrefixStrings, s.Name, s.Value))
 		}
 	}
 
@@ -115,14 +115,14 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		s := res.Colors[i]
 		// Method implementation
 		a, r, g, b := hexToInt(s.Value)
-		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s { return [UIColor colorWithRed:%d/255.0 green:%d/255.0 blue:%d/255.0 alpha:%d/255.0]; }\n", s.Name, r, g, b, a))
+		f.WriteString(fmt.Sprintf("+ (UIColor *)%s%s { return [UIColor colorWithRed:%d/255.0 green:%d/255.0 blue:%d/255.0 alpha:%d/255.0]; }\n", opt.PrefixColors, s.Name, r, g, b, a))
 	}
 
 	// Drawable
 	for i := range res.Drawables {
 		s := res.Drawables[i]
 		// Method implementation
-		f.WriteString(fmt.Sprintf("+ (UIImage *)drawable_%s { return [UIImage imageNamed:@\"%s\"]; }\n", s.Name, s.Name))
+		f.WriteString(fmt.Sprintf("+ (UIImage *)%s%s { return [UIImage imageNamed:@\"%s\"]; }\n", opt.PrefixDrawables, s.Name, s.Name))
 	}
 
 	f.WriteString(`

@@ -7,11 +7,14 @@ import "flag"
 
 // Command line options
 type Options struct {
-	ResDir   string
-	OutDir   string
-	Class    string
-	Clean    bool
-	Localize bool
+	ResDir          string
+	OutDir          string
+	Class           string
+	Clean           bool
+	Localize        bool
+	PrefixStrings   string
+	PrefixColors    string
+	PrefixDrawables string
 }
 
 // Resource model structure
@@ -44,6 +47,9 @@ func main() {
 		class    = flag.String("class", "R", "Class name to overwrite default value(R). Optional.")
 		clean    = flag.Bool("clean", false, "Clean output directory before execution.")
 		localize = flag.Bool("localize", false, "Enable localization using NSLocalizedStringFromTable.")
+		ps       = flag.String("ps", "string_", "Prefix for generated string methods.")
+		pc       = flag.String("pc", "color_", "Prefix for generated color methods.")
+		pd       = flag.String("pd", "drawable_", "Prefix for generated drawable methods.")
 	)
 	flag.Parse()
 	if *resDir == "" || *outDir == "" {
@@ -54,9 +60,12 @@ func main() {
 
 	// Parse resource XML files and generate source code
 	parse(&Options{
-		ResDir:   *resDir,
-		OutDir:   *outDir,
-		Class:    *class,
-		Clean:    *clean,
-		Localize: *localize})
+		ResDir:          *resDir,
+		OutDir:          *outDir,
+		Class:           *class,
+		Clean:           *clean,
+		Localize:        *localize,
+		PrefixStrings:   *ps,
+		PrefixColors:    *pc,
+		PrefixDrawables: *pd})
 }
