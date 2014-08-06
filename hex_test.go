@@ -27,7 +27,7 @@ func testHexToInt(t *testing.T, expr string, ea, er, eg, eb int) (fail bool, msg
 	fail = false
 	a, r, g, b := hexToInt(expr)
 	if a != ea || r != er || g != eg || b != eb {
-		msg = fmt.Sprintf("Expected %s -> (a, r, g, b)=(%d, %d, %d, %d) but was (%d,%d,%d,%d)", expr, ea, er, eg, eb, a, r, g, b)
+		msg = fmt.Sprintf("Expected %s -> (a, r, g, b)=(%d, %d, %d, %d) but was (%d,%d,%d,%d)\n", expr, ea, er, eg, eb, a, r, g, b)
 		fail = true
 	}
 	return
