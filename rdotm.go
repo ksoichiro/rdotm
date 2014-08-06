@@ -34,9 +34,10 @@ type Options struct {
 
 // Resource model structure
 type Resources struct {
-	Language string   `xml:"-"`
-	Strings  []String `xml:"string"`
-	Colors   []Color  `xml:"color"`
+	Language  string     `xml:"-"`
+	Strings   []String   `xml:"string"`
+	Colors    []Color    `xml:"color"`
+	Drawables []Drawable `xml:"-"`
 }
 
 type String struct {
@@ -47,6 +48,10 @@ type String struct {
 type Color struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:",chardata"`
+}
+
+type Drawable struct {
+	Name string
 }
 
 func main() {
@@ -121,6 +126,10 @@ func parse(opt *Options) {
 		valuesDir := filepath.Join(opt.ResDir, "values")
 		res = parseLang(valuesDir)
 	}
+	resD := parseDrawables(opt)
+	if 0 < len(resD.Drawables) {
+		res.Drawables = append(res.Drawables, resD.Drawables...)
+	}
 	printAsObjectiveC(&res, opt)
 }
 
@@ -138,6 +147,39 @@ func parseLang(valuesDir string) (res Resources) {
 		}
 		if 0 < len(r.Colors) {
 			res.Colors = append(res.Colors, r.Colors...)
+		}
+	}
+	return res
+}
+
+func parseDrawables(opt *Options) (res Resources) {
+	resSubDirs, _ := ioutil.ReadDir(opt.ResDir)
+	drawables := make(map[string]string)
+
+	for i := range resSubDirs {
+		// Get only drawable directory
+		drawableDir := resSubDirs[i]
+		if matched, _ := regexp.MatchString("^drawable", drawableDir.Name()); !matched {
+			continue
+		}
+
+		files, _ := ioutil.ReadDir(filepath.Join(opt.ResDir, drawableDir.Name()))
+		for j := range files {
+			entry := files[j]
+			if matched, _ := regexp.MatchString(".(png|jpeg|jpg)$", strings.ToLower(entry.Name())); !matched {
+				continue
+			}
+			// Identify drawables without modifiers(@*)
+			basename := regexp.MustCompile("(@[^@]+)?\\.[a-zA-Z]+$").ReplaceAllString(entry.Name(), "")
+
+			if _, ok := drawables[basename]; ok {
+				// Already found
+				continue
+			}
+			drawables[basename] = basename
+
+			// Append new drawable name
+			res.Drawables = append(res.Drawables, Drawable{Name: basename})
 		}
 	}
 	return res
@@ -216,6 +258,14 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 `, s.Value, s.Name))
 	}
 
+	// Drawable
+	for i := range res.Drawables {
+		s := res.Drawables[i]
+		// Method definition
+		f.WriteString(fmt.Sprintf(`+ (UIImage *)drawable_%s;
+`, s.Name))
+	}
+
 	f.WriteString(`
 @end
 `)
@@ -252,6 +302,13 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		// Method implementation
 		a, r, g, b := hexToInt(s.Value)
 		f.WriteString(fmt.Sprintf("+ (UIColor *)color_%s { return [UIColor colorWithRed:%d/255.0 green:%d/255.0 blue:%d/255.0 alpha:%d/255.0]; }\n", s.Name, r, g, b, a))
+	}
+
+	// Drawable
+	for i := range res.Drawables {
+		s := res.Drawables[i]
+		// Method implementation
+		f.WriteString(fmt.Sprintf("+ (UIImage *)drawable_%s { return [UIImage imageNamed:@\"%s\"]; }\n", s.Name, s.Name))
 	}
 
 	f.WriteString(`

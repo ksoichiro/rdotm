@@ -24,6 +24,9 @@
     // Colors
     [self.view setBackgroundColor:[R color_default_bg]];
     [self.message setTextColor:[R color_default_text]];
+
+    // Drawables
+    [self.image setImage:[R drawable_star]];
 }
 
 @end

@@ -17,6 +17,8 @@
 		DE324682198D4AB9003A83CA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DE324681198D4AB9003A83CA /* ViewController.m */; };
 		DE324685198D4AB9003A83CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE324683198D4AB9003A83CA /* Main.storyboard */; };
 		DE324687198D4AB9003A83CA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE324686198D4AB9003A83CA /* Images.xcassets */; };
+		DE58AA811992537E00343892 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = DE58AA7F1992537E00343892 /* star.png */; };
+		DE58AA821992537E00343892 /* star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DE58AA801992537E00343892 /* star@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		DE324681198D4AB9003A83CA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		DE324684198D4AB9003A83CA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DE324686198D4AB9003A83CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DE58AA7F1992537E00343892 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
+		DE58AA801992537E00343892 /* star@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,7 @@
 		DE3021B8198FB42C0039FE42 /* res */ = {
 			isa = PBXGroup;
 			children = (
+				DE58AA7E1992537E00343892 /* drawable */,
 				DE3021B9198FB42C0039FE42 /* values */,
 				DE3021BC198FB42C0039FE42 /* values-ja */,
 			);
@@ -142,6 +147,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DE58AA7E1992537E00343892 /* drawable */ = {
+			isa = PBXGroup;
+			children = (
+				DE58AA7F1992537E00343892 /* star.png */,
+				DE58AA801992537E00343892 /* star@2x.png */,
+			);
+			path = drawable;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -203,8 +217,10 @@
 			files = (
 				DE3021C1198FB42C0039FE42 /* strings.xml in Resources */,
 				DE3021BE198FB42C0039FE42 /* R.strings in Resources */,
+				DE58AA821992537E00343892 /* star@2x.png in Resources */,
 				DE3021C2198FB42C0039FE42 /* strings.xml in Resources */,
 				DE324685198D4AB9003A83CA /* Main.storyboard in Resources */,
+				DE58AA811992537E00343892 /* star.png in Resources */,
 				DE324687198D4AB9003A83CA /* Images.xcassets in Resources */,
 				DE3021C0198FB42C0039FE42 /* colors.xml in Resources */,
 			);
