@@ -1,34 +1,26 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
-func TestHexToInt(t *testing.T) {
-	if fail, msg := testHexToInt(t, "#FF336699", 255, 51, 102, 153); fail {
-		t.Errorf(msg)
-	}
-	if fail, msg := testHexToInt(t, "FF336699", 255, 51, 102, 153); fail {
-		t.Errorf(msg)
-	}
-	if fail, msg := testHexToInt(t, "#336699", 255, 51, 102, 153); fail {
-		t.Errorf(msg)
-	}
-	if fail, msg := testHexToInt(t, "#9369", 153, 51, 102, 153); fail {
-		t.Errorf(msg)
-	}
-	if fail, msg := testHexToInt(t, "#369", 255, 51, 102, 153); fail {
-		t.Errorf(msg)
-	}
+var hextests = []struct {
+	expr string
+	a    int
+	r    int
+	g    int
+	b    int
+}{
+	{"#FF336699", 255, 51, 102, 153},
+	{"FF336699", 255, 51, 102, 153},
+	{"#336699", 255, 51, 102, 153},
+	{"#9369", 153, 51, 102, 153},
+	{"#369", 255, 51, 102, 153},
 }
 
-func testHexToInt(t *testing.T, expr string, ea, er, eg, eb int) (fail bool, msg string) {
-	fail = false
-	a, r, g, b := hexToInt(expr)
-	if a != ea || r != er || g != eg || b != eb {
-		msg = fmt.Sprintf("Expected %s -> (a, r, g, b)=(%d, %d, %d, %d) but was (%d,%d,%d,%d)\n", expr, ea, er, eg, eb, a, r, g, b)
-		fail = true
+func TestHexToInt(t *testing.T) {
+	for _, tt := range hextests {
+		a, r, g, b := hexToInt(tt.expr)
+		if a != tt.a || r != tt.r || g != tt.g || b != tt.b {
+			t.Errorf("Expected %s -> (a, r, g, b)=(%d, %d, %d, %d) but was (%d,%d,%d,%d)\n", tt.expr, tt.a, tt.r, tt.g, tt.b, a, r, g, b)
+		}
 	}
-	return
 }
