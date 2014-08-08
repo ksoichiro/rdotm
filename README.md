@@ -77,6 +77,15 @@ There are several methods to install rdotm.
 Note that the latest release may be stable but not always the "latest".  
 If you want to use the truly latest version, install it with `go get` or `gom`.
 
+### Homebrew
+
+For OS X users, you can install it with [Homebrew](http://brew.sh/).
+
+```sh
+$ brew tap ksoichiro/rdotm
+$ brew install rdotm
+```
+
 ### Install as a golang package
 
 If you want to install it as a global command, try this:
