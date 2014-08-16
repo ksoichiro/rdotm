@@ -6,13 +6,20 @@ import (
 	"testing"
 )
 
+var allTypes = map[string]bool{
+	"string":   true,
+	"integer":  true,
+	"color":    true,
+	"drawable": true,
+}
+
 func TestParseDrawable(t *testing.T) {
 	var tests = []struct {
 		opt               Options
 		expectedResources int
 	}{
-		{Options{ResDir: filepath.Join("testdata", "res"), OutDir: "_out"}, 1},
-		{Options{ResDir: filepath.Join("testdata", "res2"), OutDir: "_out"}, 3},
+		{Options{ResDir: filepath.Join("testdata", "res"), OutDir: "_out", Types: allTypes}, 1},
+		{Options{ResDir: filepath.Join("testdata", "res2"), OutDir: "_out", Types: allTypes}, 3},
 	}
 	for _, tt := range tests {
 		res := parseDrawables(&tt.opt)
@@ -20,6 +27,16 @@ func TestParseDrawable(t *testing.T) {
 			t.Errorf("Expected %d drawables but was %d\n", tt.expectedResources, len(res.Drawables))
 		}
 		os.RemoveAll(tt.opt.OutDir)
+	}
+	for _, sw := range []bool{true, false} {
+		opt := &Options{ResDir: filepath.Join("testdata", "res"), OutDir: "_out", Types: map[string]bool{"drawable": sw}}
+		res := parseDrawables(opt)
+		if sw && len(res.Drawables) == 0 {
+			t.Errorf("Expected some drawables but was nothingd\n")
+		} else if !sw && len(res.Drawables) != 0 {
+			t.Errorf("Expected no drawables but was %d drawables\n", len(res.Drawables))
+		}
+		os.RemoveAll(opt.OutDir)
 	}
 }
 
@@ -47,7 +64,7 @@ func TestParseXml(t *testing.T) {
 }
 
 func TestParseLang(t *testing.T) {
-	res := parseLang(filepath.Join("testdata", "res", "values"))
+	res := parseLang(&Options{Types: allTypes}, filepath.Join("testdata", "res", "values"))
 	if len(res.Integers) != 2 {
 		t.Errorf("Expected %d strings but was %d\n", 2, len(res.Integers))
 	}
@@ -67,5 +84,44 @@ func TestParseLang(t *testing.T) {
 	res = parseXml("invalid")
 	if len(res.Integers) != 0 {
 		t.Errorf("Expected %d strings but was %d\n", 0, len(res.Integers))
+	}
+}
+
+func TestParseLangPartial(t *testing.T) {
+	var allTypesTests = []map[string]bool{
+		{"string": true, "integer": false, "color": false, "drawable": false},
+		{"string": false, "integer": true, "color": false, "drawable": false},
+		{"string": false, "integer": false, "color": true, "drawable": false},
+	}
+
+	for _, tests := range allTypesTests {
+		res := parseLang(&Options{Types: tests}, filepath.Join("testdata", "res", "values"))
+		if tests["string"] {
+			if len(res.Strings) == 0 {
+				t.Errorf("Expected some strings but was nothing\n")
+			}
+		} else {
+			if len(res.Strings) != 0 {
+				t.Errorf("Expected no strings but was %d\n", len(res.Strings))
+			}
+		}
+		if tests["integer"] {
+			if len(res.Integers) == 0 {
+				t.Errorf("Expected some integers but was nothing\n")
+			}
+		} else {
+			if len(res.Integers) != 0 {
+				t.Errorf("Expected no integers but was %d\n", len(res.Integers))
+			}
+		}
+		if tests["color"] {
+			if len(res.Colors) == 0 {
+				t.Errorf("Expected some colors but was nothing\n")
+			}
+		} else {
+			if len(res.Colors) != 0 {
+				t.Errorf("Expected no colors but was %d\n", len(res.Colors))
+			}
+		}
 	}
 }
