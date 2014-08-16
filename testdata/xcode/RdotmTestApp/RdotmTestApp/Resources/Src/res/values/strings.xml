@@ -1,4 +1,5 @@
 <resources>
     <string name="title_top">Demo</string>
-    <string name="label_message">Hello, world!</string>
+    <string name="label_message">Hello, %1$s!</string>
+    <string name="label_message2">Strings such as '%1$s', integers such as '%2$d' can be used.</string>
 </resources>
