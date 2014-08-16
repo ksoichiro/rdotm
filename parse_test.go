@@ -7,19 +7,20 @@ import (
 )
 
 func TestParseDrawable(t *testing.T) {
-	opt := Options{ResDir: filepath.Join("testdata", "res"), OutDir: "_out"}
-	res := parseDrawables(&opt)
-	if len(res.Drawables) != 1 {
-		t.Errorf("Expected %d strings but was %d\n", 1, len(res.Drawables))
+	var tests = []struct {
+		opt               Options
+		expectedResources int
+	}{
+		{Options{ResDir: filepath.Join("testdata", "res"), OutDir: "_out"}, 1},
+		{Options{ResDir: filepath.Join("testdata", "res2"), OutDir: "_out"}, 3},
 	}
-	os.RemoveAll(opt.OutDir)
-
-	opt = Options{ResDir: filepath.Join("testdata", "res2"), OutDir: "_out"}
-	res = parseDrawables(&opt)
-	if len(res.Drawables) != 3 {
-		t.Errorf("Expected %d strings but was %d\n", 3, len(res.Drawables))
+	for _, tt := range tests {
+		res := parseDrawables(&tt.opt)
+		if len(res.Drawables) != tt.expectedResources {
+			t.Errorf("Expected %d drawables but was %d\n", tt.expectedResources, len(res.Drawables))
+		}
+		os.RemoveAll(tt.opt.OutDir)
 	}
-	os.RemoveAll(opt.OutDir)
 }
 
 func TestParseXml(t *testing.T) {
