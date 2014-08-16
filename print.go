@@ -62,10 +62,7 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	}
 
 	// Integer
-	for _, i := range res.Items {
-		if i.Type != "integer" {
-			continue
-		}
+	for _, i := range res.Integers {
 		// Method definition
 		f.WriteString(fmt.Sprintf(`/** %s */
 + (NSInteger)%s%s;
@@ -117,10 +114,7 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	}
 
 	// Integer
-	for _, i := range res.Items {
-		if i.Type != "integer" {
-			continue
-		}
+	for _, i := range res.Integers {
 		// Method implementation
 		f.WriteString(fmt.Sprintf("+ (NSInteger)%s%s { return %s; }\n", opt.PrefixIntegers, i.Name, i.Value))
 	}

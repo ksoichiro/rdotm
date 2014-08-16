@@ -22,12 +22,18 @@ type Options struct {
 type Resources struct {
 	Language  string     `xml:"-"`
 	Strings   []String   `xml:"string"`
-	Items     []Item     `xml:"item"`
+	Integers  []Integer  `xml:"integer"`
 	Colors    []Color    `xml:"color"`
 	Drawables []Drawable `xml:"-"`
+	Items     []Item     `xml:"item"`
 }
 
 type String struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:",chardata"`
+}
+
+type Integer struct {
 	Name  string `xml:"name,attr"`
 	Value string `xml:",chardata"`
 }
