@@ -61,6 +61,17 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 `, s.Value, opt.PrefixStrings, s.Name))
 	}
 
+	// Integer
+	for _, i := range res.Items {
+		if i.Type != "integer" {
+			continue
+		}
+		// Method definition
+		f.WriteString(fmt.Sprintf(`/** %s */
++ (NSInteger)%s%s;
+`, i.Value, opt.PrefixIntegers, i.Name))
+	}
+
 	// Color
 	for _, c := range res.Colors {
 		// Method definition
@@ -103,6 +114,15 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		} else {
 			f.WriteString(fmt.Sprintf("+ (NSString *)%s%s { return @\"%s\"; }\n", opt.PrefixStrings, s.Name, s.Value))
 		}
+	}
+
+	// Integer
+	for _, i := range res.Items {
+		if i.Type != "integer" {
+			continue
+		}
+		// Method implementation
+		f.WriteString(fmt.Sprintf("+ (NSInteger)%s%s { return %s; }\n", opt.PrefixIntegers, i.Name, i.Value))
 	}
 
 	// Color
