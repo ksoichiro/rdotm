@@ -25,9 +25,8 @@ func parse(opt *Options) {
 	var res Resources
 	if opt.Localize {
 		resSubDirs, _ := ioutil.ReadDir(opt.ResDir)
-		for i := range resSubDirs {
+		for _, valuesDir := range resSubDirs {
 			// Get only values directories
-			valuesDir := resSubDirs[i]
 			if matched, _ := regexp.MatchString("^values", valuesDir.Name()); !matched {
 				continue
 			}
@@ -69,8 +68,7 @@ func parse(opt *Options) {
 
 func parseLang(valuesDir string) (res Resources) {
 	files, _ := ioutil.ReadDir(valuesDir)
-	for j := range files {
-		entry := files[j]
+	for _, entry := range files {
 		if matched, _ := regexp.MatchString(".xml$", entry.Name()); !matched {
 			continue
 		}
@@ -90,16 +88,14 @@ func parseDrawables(opt *Options) (res Resources) {
 	resSubDirs, _ := ioutil.ReadDir(opt.ResDir)
 	drawables := make(map[string]string)
 
-	for i := range resSubDirs {
+	for _, drawableDir := range resSubDirs {
 		// Get only drawable directory
-		drawableDir := resSubDirs[i]
 		if matched, _ := regexp.MatchString("^drawable", drawableDir.Name()); !matched {
 			continue
 		}
 
 		files, _ := ioutil.ReadDir(filepath.Join(opt.ResDir, drawableDir.Name()))
-		for j := range files {
-			entry := files[j]
+		for _, entry := range files {
 			if matched, _ := regexp.MatchString(".(png|jpeg|jpg)$", strings.ToLower(entry.Name())); !matched {
 				continue
 			}
