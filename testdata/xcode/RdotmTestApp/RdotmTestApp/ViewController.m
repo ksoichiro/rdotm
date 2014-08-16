@@ -19,7 +19,8 @@
 
     // Strings
     [self setTitle:[R string_title_top]];
-    [self.message setText:[R string_label_message]];
+    [self.message setText:[NSString stringWithFormat:[R string_label_message], @"world"]];
+    [self.message2 setText:[NSString stringWithFormat:[R string_label_message2], @"foo", 10]];
 
     // Colors
     [self.view setBackgroundColor:[R color_default_bg]];
