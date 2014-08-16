@@ -166,6 +166,7 @@ res
 | `-pi` | integer_ | Prefix for generated integer methods. |
 | `-pc` | color_ | Prefix for generated color methods. |
 | `-pd` | drawable_ | Prefix for generated drawable methods. |
+| `-types` | string,integer,color,drawable | Types of resources. Separate with commas. |
 
 ## Example
 

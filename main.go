@@ -3,7 +3,11 @@
 
 package main
 
-import "flag"
+import (
+	"flag"
+	"fmt"
+	"strings"
+)
 
 // Command line options
 type Options struct {
@@ -16,6 +20,7 @@ type Options struct {
 	PrefixIntegers  string
 	PrefixColors    string
 	PrefixDrawables string
+	Types           map[string]bool
 }
 
 // Resource model structure
@@ -65,12 +70,28 @@ func main() {
 		pi       = flag.String("pi", "integer_", "Prefix for generated integer methods.")
 		pc       = flag.String("pc", "color_", "Prefix for generated color methods.")
 		pd       = flag.String("pd", "drawable_", "Prefix for generated drawable methods.")
+		types    = flag.String("types", "string,integer,color,drawable", "Types of resources. Separate with commas.")
 	)
 	flag.Parse()
 	if *resDir == "" || *outDir == "" {
 		// Exit if the required options are empty
 		flag.Usage()
 		return
+	}
+	typesSet := make(map[string]bool)
+	validTypesSet := map[string]bool{
+		"string":   true,
+		"integer":  true,
+		"color":    true,
+		"drawable": true,
+	}
+	for _, t := range strings.Split(*types, ",") {
+		if !validTypesSet[t] {
+			fmt.Printf("Invalid type: %s\n", t)
+			flag.Usage()
+			return
+		}
+		typesSet[t] = true
 	}
 
 	// Parse resource XML files and generate source code
@@ -83,5 +104,6 @@ func main() {
 		PrefixStrings:   *ps,
 		PrefixIntegers:  *pi,
 		PrefixColors:    *pc,
-		PrefixDrawables: *pd})
+		PrefixDrawables: *pd,
+		Types:           typesSet})
 }

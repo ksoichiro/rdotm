@@ -36,7 +36,7 @@ func parse(opt *Options) {
 			if valuesDir.Name() == "values" {
 				// Base language
 				lang = "Base"
-				r = parseLang(filepath.Join(opt.ResDir, valuesDir.Name()))
+				r = parseLang(opt, filepath.Join(opt.ResDir, valuesDir.Name()))
 				// Output only base language to Objective-C source
 				res = r
 			} else {
@@ -50,14 +50,14 @@ func parse(opt *Options) {
 					lang = groups[1]
 				}
 
-				r = parseLang(filepath.Join(opt.ResDir, valuesDir.Name()))
+				r = parseLang(opt, filepath.Join(opt.ResDir, valuesDir.Name()))
 			}
 			// Create R.strings
 			printLocalizableStrings(&r, opt, lang)
 		}
 	} else {
 		valuesDir := filepath.Join(opt.ResDir, "values")
-		res = parseLang(valuesDir)
+		res = parseLang(opt, valuesDir)
 	}
 	resD := parseDrawables(opt)
 	if 0 < len(resD.Drawables) {
@@ -66,7 +66,7 @@ func parse(opt *Options) {
 	printAsObjectiveC(&res, opt)
 }
 
-func parseLang(valuesDir string) (res Resources) {
+func parseLang(opt *Options, valuesDir string) (res Resources) {
 	files, _ := ioutil.ReadDir(valuesDir)
 	// Regular expressions for format replacement
 	expStr := regexp.MustCompile("%([^\\$]*\\$?)s")
@@ -76,24 +76,32 @@ func parseLang(valuesDir string) (res Resources) {
 		}
 		entryPath := filepath.Join(valuesDir, entry.Name())
 		r := parseXml(entryPath)
-		if 0 < len(r.Strings) {
-			// Replacing Android format to that of Objective-C
-			for _, s := range r.Strings {
-				// Usually, we use NSString so %1$s should be converted to '%@'
-				s.Value = expStr.ReplaceAllString(s.Value, "%$1@")
-				res.Strings = append(res.Strings, s)
+		if opt.Types["string"] {
+			if 0 < len(r.Strings) {
+				// Replacing Android format to that of Objective-C
+				for _, s := range r.Strings {
+					// Usually, we use NSString so %1$s should be converted to '%@'
+					s.Value = expStr.ReplaceAllString(s.Value, "%$1@")
+					res.Strings = append(res.Strings, s)
+				}
 			}
 		}
-		if 0 < len(r.Integers) {
-			res.Integers = append(res.Integers, r.Integers...)
+		if opt.Types["integer"] {
+			if 0 < len(r.Integers) {
+				res.Integers = append(res.Integers, r.Integers...)
+			}
 		}
-		if 0 < len(r.Colors) {
-			res.Colors = append(res.Colors, r.Colors...)
+		if opt.Types["color"] {
+			if 0 < len(r.Colors) {
+				res.Colors = append(res.Colors, r.Colors...)
+			}
 		}
 		if 0 < len(r.Items) {
 			for _, i := range r.Items {
-				if i.Type == "integer" {
-					res.Integers = append(res.Integers, Integer{Name: i.Name, Value: i.Value})
+				if opt.Types["integer"] {
+					if i.Type == "integer" {
+						res.Integers = append(res.Integers, Integer{Name: i.Name, Value: i.Value})
+					}
 				}
 			}
 		}
@@ -102,6 +110,9 @@ func parseLang(valuesDir string) (res Resources) {
 }
 
 func parseDrawables(opt *Options) (res Resources) {
+	if !opt.Types["drawable"] {
+		return
+	}
 	resSubDirs, _ := ioutil.ReadDir(opt.ResDir)
 	drawables := make(map[string]string)
 
