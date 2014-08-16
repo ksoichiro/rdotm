@@ -21,6 +21,14 @@ Hex color expressions are converted when executing this tool.
 
 So if you have a utility method like `[UIColor colorWithHexString]` to convert hex strings on runtime, your app could be a little bit faster.
 
+### Integer reference method generation
+
+#### What is it?
+
+A tool to generate code that makes you possible to access integer resources via method:  
+`<integer name="max_length_name">20</string>` -> `[R integer_max_length_name]`  
+`<item name="max_length_name" type="integer">20</string>` -> `[R integer_max_length_name]`
+
 ### String reference method generation
 
 #### What is it?
@@ -155,6 +163,7 @@ res
 | `-clean` | false | Clean output directory before execution. |
 | `-localize` | false | Enable localization using `NSLocalizedStringFromTable`. |
 | `-ps` | string_ | Prefix for generated string methods. |
+| `-pi` | integer_ | Prefix for generated integer methods. |
 | `-pc` | color_ | Prefix for generated color methods. |
 | `-pd` | drawable_ | Prefix for generated drawable methods. |
 
@@ -168,6 +177,14 @@ res/values/strings.xml
 <resources>
     <string name="title_top">Demo</string>
     <string name="label_message">Hello, world!</string>
+</resources>
+```
+
+res/values/integers.xml
+
+```
+<resources>
+    <integer name="sample_number">10</item>
 </resources>
 ```
 
@@ -205,6 +222,8 @@ R.h
 + (NSString *)string_title_top;
 /** Hello, world! */
 + (NSString *)string_label_message;
+/** 10 */
++ (NSInteger)integer_sample_number;
 /** #bef */
 + (UIColor *)color_default_bg;
 /** #990099cc */
@@ -227,6 +246,7 @@ R.m
 
 + (NSString *)string_title_top { return @"Demo"; }
 + (NSString *)string_label_message { return @"Hello, world!"; }
++ (NSInteger)integer_sample_number { return 10; }
 + (UIColor *)color_default_bg { return [UIColor colorWithRed:187/255.0 green:238/255.0 blue:255/255.0 alpha:255/255.0]; }
 + (UIColor *)color_default_text { return [UIColor colorWithRed:0/255.0 green:153/255.0 blue:204/255.0 alpha:153/255.0]; }
 + (UIImage *)drawable_star { return [UIImage imageNamed:@"star"]; }
@@ -249,6 +269,7 @@ R.m
 
 + (NSString *)string_title_top { return NSLocalizedStringFromTable(@"title_top", @"R", nil); }
 + (NSString *)string_label_message { return NSLocalizedStringFromTable(@"label_message", @"R", nil); }
++ (NSInteger)integer_sample_number { return 10; }
 + (UIColor *)color_default_bg { return [UIColor colorWithRed:187/255.0 green:238/255.0 blue:255/255.0 alpha:255/255.0]; }
 + (UIColor *)color_default_text { return [UIColor colorWithRed:0/255.0 green:153/255.0 blue:204/255.0 alpha:153/255.0]; }
 + (UIImage *)drawable_star { return [UIImage imageNamed:@"star"]; }

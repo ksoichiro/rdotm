@@ -84,8 +84,18 @@ func parseLang(valuesDir string) (res Resources) {
 				res.Strings = append(res.Strings, s)
 			}
 		}
+		if 0 < len(r.Integers) {
+			res.Integers = append(res.Integers, r.Integers...)
+		}
 		if 0 < len(r.Colors) {
 			res.Colors = append(res.Colors, r.Colors...)
+		}
+		if 0 < len(r.Items) {
+			for _, i := range r.Items {
+				if i.Type == "integer" {
+					res.Integers = append(res.Integers, Integer{Name: i.Name, Value: i.Value})
+				}
+			}
 		}
 	}
 	return res

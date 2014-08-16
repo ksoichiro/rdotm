@@ -13,6 +13,7 @@ type Options struct {
 	Clean           bool
 	Localize        bool
 	PrefixStrings   string
+	PrefixIntegers  string
 	PrefixColors    string
 	PrefixDrawables string
 }
@@ -21,12 +22,25 @@ type Options struct {
 type Resources struct {
 	Language  string     `xml:"-"`
 	Strings   []String   `xml:"string"`
+	Integers  []Integer  `xml:"integer"`
 	Colors    []Color    `xml:"color"`
 	Drawables []Drawable `xml:"-"`
+	Items     []Item     `xml:"item"`
 }
 
 type String struct {
 	Name  string `xml:"name,attr"`
+	Value string `xml:",chardata"`
+}
+
+type Integer struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:",chardata"`
+}
+
+type Item struct {
+	Name  string `xml:"name,attr"`
+	Type  string `xml:"type,attr"`
 	Value string `xml:",chardata"`
 }
 
@@ -48,6 +62,7 @@ func main() {
 		clean    = flag.Bool("clean", false, "Clean output directory before execution.")
 		localize = flag.Bool("localize", false, "Enable localization using NSLocalizedStringFromTable.")
 		ps       = flag.String("ps", "string_", "Prefix for generated string methods.")
+		pi       = flag.String("pi", "integer_", "Prefix for generated integer methods.")
 		pc       = flag.String("pc", "color_", "Prefix for generated color methods.")
 		pd       = flag.String("pd", "drawable_", "Prefix for generated drawable methods.")
 	)
@@ -66,6 +81,7 @@ func main() {
 		Clean:           *clean,
 		Localize:        *localize,
 		PrefixStrings:   *ps,
+		PrefixIntegers:  *pi,
 		PrefixColors:    *pc,
 		PrefixDrawables: *pd})
 }
