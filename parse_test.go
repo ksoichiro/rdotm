@@ -45,3 +45,27 @@ func TestParseXml(t *testing.T) {
 		t.Errorf("Expected %d strings but was %d\n", 0, len(res.Strings))
 	}
 }
+
+func TestParseLang(t *testing.T) {
+	res := parseLang(filepath.Join("testdata", "res", "values"))
+	if len(res.Integers) != 2 {
+		t.Errorf("Expected %d strings but was %d\n", 2, len(res.Integers))
+	}
+	// <integer> is prioritized
+	if res.Integers[0].Name != "min_length_age" {
+		t.Errorf("Expected name '%s' but was '%s'\n", "min_length_age", res.Integers[0].Name)
+	}
+	if res.Integers[0].Value != "1" {
+		t.Errorf("Expected name '%s' but was '%s'\n", "1", res.Integers[0].Value)
+	}
+	if res.Integers[1].Name != "max_length_name" {
+		t.Errorf("Expected name '%s' but was '%s'\n", "max_length_name", res.Integers[1].Name)
+	}
+	if res.Integers[1].Value != "20" {
+		t.Errorf("Expected name '%s' but was '%s'\n", "20", res.Integers[1].Value)
+	}
+	res = parseXml("invalid")
+	if len(res.Integers) != 0 {
+		t.Errorf("Expected %d strings but was %d\n", 0, len(res.Integers))
+	}
+}

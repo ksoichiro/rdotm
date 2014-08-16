@@ -1,0 +1,5 @@
+<resources>
+    <item name="max_length_name" type="integer">20</item>
+    <integer name="min_length_age">1</integer>
+    <item name="icon_size" type="dimen">48dp</item>
+</resources>
