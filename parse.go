@@ -69,8 +69,7 @@ func parse(opt *Options) {
 func parseLang(valuesDir string) (res Resources) {
 	files, _ := ioutil.ReadDir(valuesDir)
 	// Regular expressions for format replacement
-	expStr := regexp.MustCompile("%[0-9]\\$s")
-	expOther := regexp.MustCompile("%[0-9]\\$([a-z])")
+	expStr := regexp.MustCompile("%([^\\$]*\\$?)s")
 	for _, entry := range files {
 		if matched, _ := regexp.MatchString(".xml$", entry.Name()); !matched {
 			continue
@@ -81,9 +80,7 @@ func parseLang(valuesDir string) (res Resources) {
 			// Replacing Android format to that of Objective-C
 			for _, s := range r.Strings {
 				// Usually, we use NSString so %1$s should be converted to '%@'
-				s.Value = expStr.ReplaceAllLiteralString(s.Value, "%@")
-				// Otherwise, pattern chars can be also used for Objective-C
-				s.Value = expOther.ReplaceAllString(s.Value, "%$1")
+				s.Value = expStr.ReplaceAllString(s.Value, "%$1@")
 				res.Strings = append(res.Strings, s)
 			}
 		}
