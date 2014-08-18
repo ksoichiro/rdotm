@@ -183,7 +183,7 @@ res/values/strings.xml
 
 res/values/integers.xml
 
-```
+```xml
 <resources>
     <integer name="sample_number">10</item>
 </resources>
