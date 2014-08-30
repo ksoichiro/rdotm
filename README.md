@@ -166,7 +166,9 @@ res
 | `-pi` | integer_ | Prefix for generated integer methods. |
 | `-pc` | color_ | Prefix for generated color methods. |
 | `-pd` | drawable_ | Prefix for generated drawable methods. |
-| `-types` | string,integer,color,drawable | Types of resources. Separate with commas. |
+| `-pia` | array_integer_ | Prefix for generated integer array methods. |
+| `-psa` | array_string_ | Prefix for generated string array methods. |
+| `-types` | string,integer,color,drawable,integer-array,string-array | Types of resources. Separate with commas. |
 
 ## Example
 
@@ -195,6 +197,24 @@ res/values/colors.xml
 <resources>
     <color name="default_bg">#bef</color>
     <color name="default_text">#990099cc</color>
+</resources>
+```
+
+res/values/arrays.xml
+
+```xml
+<resources>
+    <integer-array name="foobar">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </integer-array>
+
+    <string-array name="blurblur">
+        <item>hoge</item>
+        <item>fuga</item>
+        <item>piyo</item>
+    </string-array>
 </resources>
 ```
 
@@ -230,6 +250,8 @@ R.h
 /** #990099cc */
 + (UIColor *)color_default_text;
 + (UIImage *)drawable_star;
++ (NSArray *)array_integer_foobar;
++ (NSArray *)array_string_blurblur;
 
 @end
 ```
@@ -251,6 +273,8 @@ R.m
 + (UIColor *)color_default_bg { return [UIColor colorWithRed:187/255.0 green:238/255.0 blue:255/255.0 alpha:255/255.0]; }
 + (UIColor *)color_default_text { return [UIColor colorWithRed:0/255.0 green:153/255.0 blue:204/255.0 alpha:153/255.0]; }
 + (UIImage *)drawable_star { return [UIImage imageNamed:@"star"]; }
++ (NSArray *)array_integer_foobar { return @[@10, @20, @30]; }
++ (NSArray *)array_string_blurblur { return @[@"hoge", @"fuga", @"piyo"]; }
 
 @end
 ```
