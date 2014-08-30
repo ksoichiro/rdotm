@@ -7,10 +7,11 @@ import (
 )
 
 var allTypes = map[string]bool{
-	"string":   true,
-	"integer":  true,
-	"color":    true,
-	"drawable": true,
+	"string":        true,
+	"integer":       true,
+	"color":         true,
+	"drawable":      true,
+	"integer-array": true,
 }
 
 func TestParseDrawable(t *testing.T) {
@@ -81,6 +82,21 @@ func TestParseLang(t *testing.T) {
 	if res.Integers[1].Value != "20" {
 		t.Errorf("Expected name '%s' but was '%s'\n", "20", res.Integers[1].Value)
 	}
+	if len(res.IntegerArrays) != 1 {
+		t.Errorf("Expected %d integer arrays but was %d\n", 1, len(res.IntegerArrays))
+	}
+	if len(res.IntegerArrays[0].Items) != 3 {
+		t.Errorf("Expected %d integer items but was %d\n", 3, len(res.IntegerArrays[0].Items))
+	}
+	if res.IntegerArrays[0].Items[0].Value != "10" {
+		t.Errorf("Expected value '%s' but was '%s'\n", "10", res.IntegerArrays[0].Items[0].Value)
+	}
+	if res.IntegerArrays[0].Items[1].Value != "20" {
+		t.Errorf("Expected value '%s' but was '%s'\n", "20", res.IntegerArrays[0].Items[1].Value)
+	}
+	if res.IntegerArrays[0].Items[2].Value != "30" {
+		t.Errorf("Expected value '%s' but was '%s'\n", "30", res.IntegerArrays[0].Items[2].Value)
+	}
 	res = parseXml("invalid")
 	if len(res.Integers) != 0 {
 		t.Errorf("Expected %d strings but was %d\n", 0, len(res.Integers))
@@ -89,9 +105,10 @@ func TestParseLang(t *testing.T) {
 
 func TestParseLangPartial(t *testing.T) {
 	var allTypesTests = []map[string]bool{
-		{"string": true, "integer": false, "color": false, "drawable": false},
-		{"string": false, "integer": true, "color": false, "drawable": false},
-		{"string": false, "integer": false, "color": true, "drawable": false},
+		{"string": true, "integer": false, "color": false, "drawable": false, "integer-array": false},
+		{"string": false, "integer": true, "color": false, "drawable": false, "integer-array": false},
+		{"string": false, "integer": false, "color": true, "drawable": false, "integer-array": false},
+		{"string": false, "integer": false, "color": false, "drawable": false, "integer-array": true},
 	}
 
 	for _, tests := range allTypesTests {
@@ -121,6 +138,15 @@ func TestParseLangPartial(t *testing.T) {
 		} else {
 			if len(res.Colors) != 0 {
 				t.Errorf("Expected no colors but was %d\n", len(res.Colors))
+			}
+		}
+		if tests["integer-array"] {
+			if len(res.IntegerArrays) == 0 {
+				t.Errorf("Expected some integer arrays but was nothing\n")
+			}
+		} else {
+			if len(res.IntegerArrays) != 0 {
+				t.Errorf("Expected no integer arrays but was %d\n", len(res.IntegerArrays))
 			}
 		}
 	}

@@ -11,6 +11,7 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *message;
 @property (strong, nonatomic) IBOutlet UILabel *message2;
+@property (strong, nonatomic) IBOutlet UILabel *message3;
 @property (strong, nonatomic) IBOutlet UIImageView *image;
 
 @end

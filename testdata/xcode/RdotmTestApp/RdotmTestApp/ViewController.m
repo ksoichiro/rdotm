@@ -30,6 +30,13 @@
 
     // Drawables
     [self.image setImage:[R drawable_star]];
+
+    // Integer array
+    NSMutableString *message3 = [NSMutableString stringWithString:@""];
+    for (NSNumber *i in [R array_integer_foobar]) {
+        [message3 appendFormat:@"%@ ", i];
+    }
+    [self.message3 setText:message3];
 }
 
 @end
