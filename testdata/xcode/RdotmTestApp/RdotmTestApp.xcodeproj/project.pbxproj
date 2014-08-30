@@ -17,6 +17,7 @@
 		DE3246B3198D4FF0003A83CA /* R.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3246B2198D4FF0003A83CA /* R.m */; };
 		DE37BA4C19925CF400C22CD2 /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = DE37BA4A19925CF400C22CD2 /* star.png */; };
 		DE37BA4D19925CF400C22CD2 /* star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = DE37BA4B19925CF400C22CD2 /* star@2x.png */; };
+		DE54717F19B1D0D60086F8A7 /* arrays.xml in Resources */ = {isa = PBXBuildFile; fileRef = DE54717E19B1D0D60086F8A7 /* arrays.xml */; };
 		DE5E0B7F199F1EB80030B30B /* integers.xml in Resources */ = {isa = PBXBuildFile; fileRef = DE5E0B7E199F1EB70030B30B /* integers.xml */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		DE3246B2198D4FF0003A83CA /* R.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = R.m; sourceTree = "<group>"; };
 		DE37BA4A19925CF400C22CD2 /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		DE37BA4B19925CF400C22CD2 /* star@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "star@2x.png"; sourceTree = "<group>"; };
+		DE54717E19B1D0D60086F8A7 /* arrays.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = arrays.xml; sourceTree = "<group>"; };
 		DE5E0B7E199F1EB70030B30B /* integers.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = integers.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -119,6 +121,7 @@
 		DE3246A0198D4BBB003A83CA /* values */ = {
 			isa = PBXGroup;
 			children = (
+				DE54717E19B1D0D60086F8A7 /* arrays.xml */,
 				DE5E0B7E199F1EB70030B30B /* integers.xml */,
 				DE302170198E06E10039FE42 /* colors.xml */,
 				DE3246A2198D4BBB003A83CA /* strings.xml */,
@@ -205,6 +208,7 @@
 				DE37BA4D19925CF400C22CD2 /* star@2x.png in Resources */,
 				DE3246A4198D4BBB003A83CA /* strings.xml in Resources */,
 				DE37BA4C19925CF400C22CD2 /* star.png in Resources */,
+				DE54717F19B1D0D60086F8A7 /* arrays.xml in Resources */,
 				DE324685198D4AB9003A83CA /* Main.storyboard in Resources */,
 				DE324687198D4AB9003A83CA /* Images.xcassets in Resources */,
 				DE302171198E06E10039FE42 /* colors.xml in Resources */,
@@ -292,7 +296,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;

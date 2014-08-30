@@ -105,6 +105,16 @@ func parseLang(opt *Options, valuesDir string) (res Resources) {
 				}
 			}
 		}
+		if opt.Types["integer-array"] {
+			if 0 < len(r.IntegerArrays) {
+				res.IntegerArrays = append(res.IntegerArrays, r.IntegerArrays...)
+			}
+		}
+		if opt.Types["string-array"] {
+			if 0 < len(r.StringArrays) {
+				res.StringArrays = append(res.StringArrays, r.StringArrays...)
+			}
+		}
 	}
 	return res
 }

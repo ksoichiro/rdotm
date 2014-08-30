@@ -84,6 +84,20 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 `, opt.PrefixDrawables, d.Name))
 	}
 
+	// Integer array
+	for _, i := range res.IntegerArrays {
+		// Method definition
+		f.WriteString(fmt.Sprintf(`+ (NSArray *)%s%s;
+`, opt.PrefixIntegerArrays, i.Name))
+	}
+
+	// String array
+	for _, i := range res.StringArrays {
+		// Method definition
+		f.WriteString(fmt.Sprintf(`+ (NSArray *)%s%s;
+`, opt.PrefixStringArrays, i.Name))
+	}
+
 	f.WriteString(`
 @end
 `)
@@ -130,6 +144,32 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 	for _, d := range res.Drawables {
 		// Method implementation
 		f.WriteString(fmt.Sprintf("+ (UIImage *)%s%s { return [UIImage imageNamed:@\"%s\"]; }\n", opt.PrefixDrawables, d.Name, d.Name))
+	}
+
+	// Integer array
+	for _, i := range res.IntegerArrays {
+		var v = ""
+		for _, n := range i.Items {
+			if v != "" {
+				v += ", "
+			}
+			v += "@" + n.Value
+		}
+		// Method implementation
+		f.WriteString(fmt.Sprintf("+ (NSArray *)%s%s { return @[%s]; }\n", opt.PrefixIntegerArrays, i.Name, v))
+	}
+
+	// String array
+	for _, i := range res.StringArrays {
+		var v = ""
+		for _, n := range i.Items {
+			if v != "" {
+				v += ", "
+			}
+			v += "@\"" + n.Value + "\""
+		}
+		// Method implementation
+		f.WriteString(fmt.Sprintf("+ (NSArray *)%s%s { return @[%s]; }\n", opt.PrefixStringArrays, i.Name, v))
 	}
 
 	f.WriteString(`
