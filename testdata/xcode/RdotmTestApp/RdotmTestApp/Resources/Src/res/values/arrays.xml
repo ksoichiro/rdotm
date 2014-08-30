@@ -4,4 +4,10 @@
         <item>20</item>
         <item>30</item>
     </integer-array>
+
+    <string-array name="blurblur">
+        <item>hoge</item>
+        <item>fuga</item>
+        <item>piyo</item>
+    </string-array>
 </resources>

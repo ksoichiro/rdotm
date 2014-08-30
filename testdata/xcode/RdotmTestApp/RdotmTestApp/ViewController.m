@@ -36,6 +36,12 @@
     for (NSNumber *i in [R array_integer_foobar]) {
         [message3 appendFormat:@"%@ ", i];
     }
+    
+    // String array
+    for (NSString *s in [R array_string_blurblur]) {
+        [message3 appendFormat:@"%@ ", s];
+    }
+    
     [self.message3 setText:message3];
 }
 

@@ -91,6 +91,13 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 `, opt.PrefixIntegerArrays, i.Name))
 	}
 
+	// String array
+	for _, i := range res.StringArrays {
+		// Method definition
+		f.WriteString(fmt.Sprintf(`+ (NSArray *)%s%s;
+`, opt.PrefixStringArrays, i.Name))
+	}
+
 	f.WriteString(`
 @end
 `)
@@ -150,6 +157,19 @@ func printAsObjectiveC(res *Resources, opt *Options) {
 		}
 		// Method implementation
 		f.WriteString(fmt.Sprintf("+ (NSArray *)%s%s { return @[%s]; }\n", opt.PrefixIntegerArrays, i.Name, v))
+	}
+
+	// String array
+	for _, i := range res.StringArrays {
+		var v = ""
+		for _, n := range i.Items {
+			if v != "" {
+				v += ", "
+			}
+			v += "@\"" + n.Value + "\""
+		}
+		// Method implementation
+		f.WriteString(fmt.Sprintf("+ (NSArray *)%s%s { return @[%s]; }\n", opt.PrefixStringArrays, i.Name, v))
 	}
 
 	f.WriteString(`

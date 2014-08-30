@@ -21,6 +21,7 @@ type Options struct {
 	PrefixColors        string
 	PrefixDrawables     string
 	PrefixIntegerArrays string
+	PrefixStringArrays  string
 	Types               map[string]bool
 }
 
@@ -33,6 +34,7 @@ type Resources struct {
 	Drawables     []Drawable     `xml:"-"`
 	Items         []Item         `xml:"item"`
 	IntegerArrays []IntegerArray `xml:"integer-array"`
+	StringArrays  []StringArray  `xml:"string-array"`
 }
 
 type String struct {
@@ -65,6 +67,11 @@ type IntegerArray struct {
 	Items []Item `xml:"item"`
 }
 
+type StringArray struct {
+	Name  string `xml:"name,attr"`
+	Items []Item `xml:"item"`
+}
+
 func main() {
 	// Get command line options
 	var (
@@ -78,7 +85,8 @@ func main() {
 		pc       = flag.String("pc", "color_", "Prefix for generated color methods.")
 		pd       = flag.String("pd", "drawable_", "Prefix for generated drawable methods.")
 		pia      = flag.String("pia", "array_integer_", "Prefix for generated integer array methods.")
-		types    = flag.String("types", "string,integer,color,drawable,integer-array", "Types of resources. Separate with commas.")
+		psa      = flag.String("psa", "array_string_", "Prefix for generated string array methods.")
+		types    = flag.String("types", "string,integer,color,drawable,integer-array,string-array", "Types of resources. Separate with commas.")
 	)
 	flag.Parse()
 	if *resDir == "" || *outDir == "" {
@@ -93,6 +101,7 @@ func main() {
 		"color":         true,
 		"drawable":      true,
 		"integer-array": true,
+		"string-array":  true,
 	}
 	for _, t := range strings.Split(*types, ",") {
 		if !validTypesSet[t] {
@@ -115,5 +124,6 @@ func main() {
 		PrefixColors:        *pc,
 		PrefixDrawables:     *pd,
 		PrefixIntegerArrays: *pia,
+		PrefixStringArrays:  *psa,
 		Types:               typesSet})
 }

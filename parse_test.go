@@ -12,6 +12,7 @@ var allTypes = map[string]bool{
 	"color":         true,
 	"drawable":      true,
 	"integer-array": true,
+	"string-array":  true,
 }
 
 func TestParseDrawable(t *testing.T) {
@@ -105,10 +106,11 @@ func TestParseLang(t *testing.T) {
 
 func TestParseLangPartial(t *testing.T) {
 	var allTypesTests = []map[string]bool{
-		{"string": true, "integer": false, "color": false, "drawable": false, "integer-array": false},
-		{"string": false, "integer": true, "color": false, "drawable": false, "integer-array": false},
-		{"string": false, "integer": false, "color": true, "drawable": false, "integer-array": false},
-		{"string": false, "integer": false, "color": false, "drawable": false, "integer-array": true},
+		{"string": true, "integer": false, "color": false, "drawable": false, "integer-array": false, "string-array": false},
+		{"string": false, "integer": true, "color": false, "drawable": false, "integer-array": false, "string-array": false},
+		{"string": false, "integer": false, "color": true, "drawable": false, "integer-array": false, "string-array": false},
+		{"string": false, "integer": false, "color": false, "drawable": false, "integer-array": true, "string-array": false},
+		{"string": false, "integer": false, "color": false, "drawable": false, "integer-array": false, "string-array": true},
 	}
 
 	for _, tests := range allTypesTests {
@@ -147,6 +149,15 @@ func TestParseLangPartial(t *testing.T) {
 		} else {
 			if len(res.IntegerArrays) != 0 {
 				t.Errorf("Expected no integer arrays but was %d\n", len(res.IntegerArrays))
+			}
+		}
+		if tests["string-array"] {
+			if len(res.StringArrays) == 0 {
+				t.Errorf("Expected some string arrays but was nothing\n")
+			}
+		} else {
+			if len(res.StringArrays) != 0 {
+				t.Errorf("Expected no string arrays but was %d\n", len(res.StringArrays))
 			}
 		}
 	}
