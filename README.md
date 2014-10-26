@@ -1,7 +1,7 @@
 # rdotm
 
 [![Build Status](https://travis-ci.org/ksoichiro/rdotm.svg?branch=master)](https://travis-ci.org/ksoichiro/rdotm)
-[![Coverage Status](https://coveralls.io/repos/ksoichiro/rdotm/badge.png?branch=master)](https://coveralls.io/r/ksoichiro/rdotm?branch=master)
+[![Coverage Status](https://img.shields.io/coveralls/ksoichiro/rdotm/master.svg)](https://coveralls.io/r/ksoichiro/rdotm?branch=master)
 
 rdotm(R.m) is the Objective-C resource definition generator like Android app's `R.java`.
 
